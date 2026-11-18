@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 2 Spanish Practice: Quarter 2</title>
+<style>
+  :root{
+    --ink:#1f2340; --soft:#5a5f80; --bg:#fff8ec; --card:#ffffff;
+    --green:#1f9d55; --green-bg:#e3f7ea;
+    --c:#3b82f6; /* topic color, set per topic */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"Segoe UI", "Trebuchet MS", Arial, sans-serif;
+    color:var(--ink); background:var(--bg);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  button{font-family:inherit; cursor:pointer}
+
+  /* ---------- HOME ---------- */
+  #home{flex:1; display:flex; flex-direction:column; align-items:center; padding:2.5vh 3vw}
+  .home-head{text-align:center; margin-bottom:2.5vh}
+  .home-head h1{margin:0; font-size:clamp(32px,4.6vw,64px); letter-spacing:.5px}
+  .home-head h1 span{color:#e4572e}
+  .home-head p{margin:.4em 0 0; font-size:clamp(16px,1.7vw,24px); color:var(--soft)}
+  .grid{
+    width:100%; max-width:1400px; flex:1;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:2vh 1.6vw;
+  }
+  .topic-btn{
+    border:none; border-radius:24px; padding:1.6vh 1.2vw;
+    background:var(--c); color:#fff; text-align:left;
+    display:flex; align-items:center; gap:1.2vw;
+    box-shadow:0 6px 0 rgba(0,0,0,.18); transition:transform .1s;
+  }
+  .topic-btn:hover{transform:translateY(-3px)}
+  .topic-btn:active{transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .topic-btn .ico{font-size:clamp(40px,5vw,76px); line-height:1; background:rgba(255,255,255,.25); border-radius:18px; padding:.15em .2em}
+  .topic-btn .t{font-size:clamp(20px,2.1vw,34px); font-weight:800; line-height:1.15}
+  .topic-btn .s{font-size:clamp(14px,1.25vw,20px); opacity:.95; margin-top:.25em}
+  .home-foot{margin-top:2vh; font-size:15px; color:var(--soft); display:flex; gap:20px; align-items:center; flex-wrap:wrap; justify-content:center}
+  .small-btn{border:2px solid #ccd; background:#fff; border-radius:12px; padding:6px 14px; font-size:15px; color:var(--ink)}
+
+  /* ---------- ACTIVITY ---------- */
+  #activity{flex:1; display:none; flex-direction:column}
+  .bar{
+    background:var(--c); color:#fff; display:flex; align-items:center; gap:16px;
+    padding:1.2vh 2vw; font-size:clamp(18px,1.8vw,28px); font-weight:800;
+  }
+  .bar .bar-ico{font-size:1.4em}
+  .bar .dots{margin-left:auto; display:flex; gap:8px}
+  .dot{width:16px; height:16px; border-radius:50%; background:rgba(255,255,255,.4)}
+  .dot.on{background:#fff}
+  .stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.5vh 4vw; text-align:center; gap:1.4vh}
+  .dir{
+    font-size:clamp(17px,min(1.9vw,3.2vh),30px); color:var(--soft); font-weight:600;
+    background:#fff; border-radius:999px; padding:.35em 1.1em; border:3px solid var(--c);
+  }
+  .dir b{color:var(--ink)}
+  .vis{font-size:clamp(56px,min(10vw,14vh),160px); line-height:1.1; min-height:1em}
+  .vis .lbl{display:block; font-size:clamp(18px,1.8vw,28px); font-weight:700; color:var(--soft)}
+  .vis-row{display:flex; gap:3vw; justify-content:center; align-items:flex-end; flex-wrap:wrap}
+  .vis-row > div{display:flex; flex-direction:column; align-items:center}
+  .story{
+    background:#fff; border-left:10px solid var(--c); border-radius:16px;
+    padding:1.2vh 2vw; font-size:clamp(20px,min(2.4vw,3.6vh),38px); line-height:1.35; text-align:left;
+    box-shadow:0 3px 10px rgba(0,0,0,.07)
+  }
+  .q{font-size:clamp(30px,min(5vw,7.5vh),78px); font-weight:800; line-height:1.15; margin:0}
+  .blank{display:inline-block; min-width:2.6em; border-bottom:6px solid var(--c)}
+  .choices{display:flex; gap:2vw; flex-wrap:wrap; justify-content:center}
+  .choice{
+    background:#fff; border:4px solid var(--c); border-radius:20px;
+    font-size:clamp(22px,min(3vw,5vh),48px); font-weight:700; padding:.2em .9em;
+    display:flex; align-items:center; gap:.45em; transition:all .25s;
+  }
+  .choice .letter{
+    background:var(--c); color:#fff; border-radius:50%;
+    width:1.5em; height:1.5em; display:inline-flex; align-items:center; justify-content:center; font-size:.75em
+  }
+  .choice.right{border-color:var(--green); background:var(--green-bg)}
+  .choice.right .letter{background:var(--green)}
+  .choice.dim{opacity:.35}
+  .answer{
+    display:none; background:var(--green-bg); border:4px solid var(--green); border-radius:22px;
+    padding:.8vh 3vw; animation:pop .3s ease-out;
+  }
+  .answer.show{display:block}
+  .answer .es{font-size:clamp(28px,min(4.4vw,6.5vh),70px); font-weight:800; color:#126b3a}
+  .answer .en{font-size:clamp(16px,min(1.8vw,3vh),28px); color:var(--soft); margin-top:.2em}
+  @keyframes pop{from{transform:scale(.85); opacity:0} to{transform:scale(1); opacity:1}}
+
+  /* intro + end */
+  .goal{font-size:clamp(20px,2vw,32px); color:var(--soft); font-weight:600}
+  .bank{display:flex; gap:1.6vw; flex-wrap:wrap; justify-content:center; max-width:1300px}
+  .word{
+    background:#fff; border-radius:20px; padding:1.2vh 1.4vw; min-width:11vw;
+    border-bottom:8px solid var(--c); box-shadow:0 3px 10px rgba(0,0,0,.07)
+  }
+  .word .e{font-size:clamp(46px,5vw,84px); line-height:1.1}
+  .word .w{font-size:clamp(22px,2.3vw,38px); font-weight:800}
+  .word .m{font-size:clamp(14px,1.3vw,20px); color:var(--soft)}
+  .vis.hero{font-size:clamp(90px,min(14vw,24vh),240px)}
+  .goal-big{font-size:clamp(30px,min(4.2vw,7vh),68px); font-weight:800; max-width:1200px; line-height:1.25}
+  .bank.big{align-items:flex-end}
+  .bank.big .word{min-width:15vw; padding:2vh 1.8vw}
+  .bank.big .e{font-size:clamp(60px,min(7vw,13vh),120px)}
+  .bank.big .w{font-size:clamp(26px,min(3vw,5vh),50px)}
+  .bank.big .m{font-size:clamp(16px,min(1.6vw,2.8vh),26px)}
+  .story-wrap{display:flex; gap:3vw; align-items:center; justify-content:center; width:100%; max-width:1500px}
+  .pic{width:min(46vw,62vh); aspect-ratio:4/3; object-fit:contain; border-radius:20px; background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.08)}
+  .pic.ph{border:5px dashed var(--c); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.4em; padding:2vh 2vw; text-align:center; font-size:clamp(18px,min(1.9vw,3.2vh),30px); color:var(--soft); box-shadow:none}
+  .ph-ico{font-size:2.6em}
+  .ph-note{font-size:.75em}
+  .pic-sm{height:min(22vh,220px); border-radius:14px; box-shadow:0 3px 10px rgba(0,0,0,.08)}
+  .story.big{font-size:clamp(24px,min(2.8vw,4.6vh),46px); padding:2vh 2.4vw}
+  .story-title{font-weight:900; color:var(--c); margin-bottom:.3em}
+  .snd-title{margin:0; font-size:clamp(34px,min(4.6vw,7.5vh),74px); font-weight:900; color:var(--c)}
+  .syl{display:flex; gap:1.2vw; flex-wrap:wrap; justify-content:center}
+  .syl span{background:var(--c); color:#fff; border-radius:14px; padding:.15em .6em; font-size:clamp(24px,min(2.8vw,4.6vh),46px); font-weight:800}
+  .sb{font-size:clamp(20px,min(2.2vw,3.8vh),36px); color:var(--soft); margin-top:.2em}
+  .sb .stress{color:var(--c); font-weight:900; font-size:1.15em}
+  .sb .dash{margin:0 .2em; opacity:.6}
+  .bank.snd .word{padding:2.4vh 2.6vw; min-width:18vw}
+  .bank.snd .w{font-size:clamp(34px,min(4.4vw,7.5vh),72px)}
+  .bank.snd .sb{font-size:clamp(24px,min(2.8vw,4.8vh),46px)}
+  .tip{font-size:clamp(17px,min(1.8vw,3vh),28px); color:var(--soft)}
+  .talk{display:flex; flex-direction:column; gap:1.1vh; width:min(1000px,80vw)}
+  .bub{font-size:clamp(26px,min(3vw,5vh),50px); font-weight:700; background:#fff; border-radius:24px; padding:.35em .9em; max-width:80%; box-shadow:0 3px 10px rgba(0,0,0,.08); text-align:left}
+  .bub.lia{align-self:flex-start; border-left:10px solid #d63384}
+  .bub.tomas{align-self:flex-end; border-right:10px solid #0077b6}
+  .bub .ten{display:block; font-size:.48em; color:var(--soft); font-weight:500; margin-top:.1em}
+  .bub .who{display:block; font-size:.5em; color:var(--soft); font-weight:700}
+  .big-title{font-size:clamp(44px,6vw,96px); font-weight:900; margin:0; color:var(--c)}
+
+  /* controls */
+  .controls{display:flex; justify-content:center; gap:1.4vw; padding:1vh 2vw 1.8vh; flex-wrap:wrap}
+  .ctl{
+    border:none; border-radius:18px; font-size:clamp(20px,2vw,32px); font-weight:800;
+    padding:.45em 1.1em; color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.2)
+  }
+  .ctl:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.2)}
+  .ctl:disabled{opacity:.35; cursor:default}
+  .ctl.home{background:#6b7280}
+  .ctl.back{background:#8b5cf6}
+  .ctl.show{background:var(--green); min-width:14vw}
+  .ctl.next{background:#e4572e}
+
+
+  /* in-class task */
+  .task{background:#fff; border-radius:24px; border:5px solid var(--c); padding:2vh 3vw; max-width:1100px; text-align:left; box-shadow:0 3px 10px rgba(0,0,0,.07)}
+  .task-title{font-size:clamp(30px,min(4vw,6.5vh),64px); font-weight:900; color:var(--c); margin:0}
+  .task-en{font-size:clamp(17px,min(1.8vw,3vh),28px); color:var(--soft); font-weight:600; margin-bottom:.6em}
+  .task ol{margin:0; padding-left:1.4em; font-size:clamp(22px,min(2.6vw,4.4vh),42px); line-height:1.4}
+  .frame{margin-top:.7em; display:inline-block; background:var(--green-bg); border:4px dashed var(--green); border-radius:16px; padding:.25em .8em; font-size:clamp(24px,min(3vw,5vh),48px); font-weight:800; color:#126b3a}
+  .mini-bank{display:flex; gap:.6vw; flex-wrap:wrap; justify-content:center; max-width:1200px}
+  .mini-bank span{background:#fff; border:3px solid var(--c); border-radius:12px; padding:.15em .6em; font-size:clamp(16px,min(1.8vw,3vh),28px); font-weight:700}
+  .note{font-size:clamp(16px,1.6vw,24px); background:#fff3cd; border:3px solid #f0b400; color:#6b4e00; border-radius:14px; padding:.3em 1em; font-weight:700}
+  .topic-btn .n{font-size:clamp(12px,1vw,16px); margin-top:.35em; background:rgba(0,0,0,.18); border-radius:8px; padding:.1em .5em; display:inline-block}
+  .listen{border:none; border-radius:999px; background:var(--c); color:#fff; font-size:clamp(26px,min(3.2vw,5.5vh),52px); font-weight:800; padding:.3em 1.2em; box-shadow:0 5px 0 rgba(0,0,0,.2)}
+  .listen:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.2)}
+  .choice.pic-choice{font-size:clamp(44px,min(6vw,10vh),100px); padding:.1em .5em}
+  .choice.pic-choice .letter{font-size:.4em}
+  @media (max-width:800px){ .grid{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
+
+<section id="home">
+  <div class="home-head">
+    <h1>¡Hola, <span>Nivel 2</span>! Práctica de español</h1>
+    <p>Spanish 2C &bull; 2A/3C &bull; 2B/3B &nbsp;|&nbsp; Quarter 2 &bull; Choose today's topic</p>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="home-foot">
+    <button class="small-btn" onclick="toggleFull()">⛶ Full screen</button>
+    <span>Keyboard: → Next &nbsp; ← Back &nbsp; Space = Show Answer &nbsp; H = Home</span>
+    <span>No class: Nov 11 &bull; Dec 23 &amp; 30 (winter break)</span>
+  </div>
+</section>
+
+<section id="activity">
+  <div class="bar"><span class="bar-ico" id="barIco"></span><span id="barTitle"></span><div class="dots" id="dots"></div></div>
+  <div class="stage" id="stage"></div>
+  <div class="controls">
+    <button class="ctl home" onclick="goHome()">🏠 Home</button>
+    <button class="ctl back" id="backBtn" onclick="back()">◀ Back</button>
+    <button class="ctl show" id="showBtn" onclick="reveal()">👀 Show Answer</button>
+    <button class="ctl next" id="nextBtn" onclick="next()">Next ▶</button>
+  </div>
+</section>
+
+<script>
+/* ---------- helpers for visuals ---------- */
+const glass = () => `<svg viewBox="0 0 100 100" style="width:1em;height:1em;vertical-align:bottom"><path d="M24 10 L76 10 L68 92 L32 92 Z" fill="#eaf6ff" stroke="#3b82f6" stroke-width="4" stroke-linejoin="round"/><path d="M28.5 46 L71.5 46 L68 92 L32 92 Z" fill="#7cc4f5"/><path d="M24 10 L76 10 L68 92 L32 92 Z" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linejoin="round"/><line x1="34" y1="18" x2="38" y2="80" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/></svg>`;   // drawn cup for el vaso
+const blanket = () => `<svg viewBox="0 0 100 100" style="width:1em;height:1em;vertical-align:bottom"><defs><pattern id="chk" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#fff"/><rect width="10" height="10" fill="#e4572e"/><rect x="10" y="10" width="10" height="10" fill="#e4572e"/></pattern></defs><path d="M10 28 L90 18 L92 78 L8 86 Z" fill="url(#chk)" stroke="#b33a1a" stroke-width="4" stroke-linejoin="round"/></svg>`;   // picnic blanket for la manta
+const napkin = () => `<svg viewBox="0 0 100 100" style="width:1em;height:1em;vertical-align:bottom"><path d="M14 22 L86 22 L86 80 L14 80 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="4" stroke-linejoin="round"/><path d="M14 22 L86 80" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6 5"/><path d="M50 22 L86 22 L86 51 Z" fill="#bfdbfe" stroke="#3b82f6" stroke-width="3" stroke-linejoin="round"/></svg>`;   // folded napkin for la servilleta
+const cal = n => `<svg viewBox="0 0 100 100" style="width:1em;height:1em;vertical-align:bottom"><rect x="10" y="14" width="80" height="76" rx="10" fill="#fff" stroke="#5a5f80" stroke-width="4"/><path d="M10 24 Q10 14 20 14 L80 14 Q90 14 90 24 L90 36 L10 36 Z" fill="#e4572e"/><rect x="28" y="6" width="8" height="18" rx="4" fill="#5a5f80"/><rect x="64" y="6" width="8" height="18" rx="4" fill="#5a5f80"/><text x="50" y="78" text-anchor="middle" font-size="${n>9?40:46}" font-weight="800" font-family="Segoe UI, Arial, sans-serif" fill="#1f2340">${n}</text></svg>`;   // calendar page with the month number
+const cals = (...ns) => ns.map(cal).join('');
+const row = (...items) => '<div class="vis-row">' + items.map(i =>
+  Array.isArray(i) ? `<div><span>${i[0]}</span><span class="lbl">${i[1]}</span></div>` : `<div><span>${i}</span></div>`
+).join('') + '</div>';
+const rep = (e, n) => e.repeat(n);
+
+/* ---------- story pictures ----------
+   Paste an image (data: URI or file name) for each story. Empty = the page looks for images/<name>.png. */
+const PICS = {
+  mar:"", calendario:"", meses:"", estaciones:"", granja:"", picnic:"", canastas:"", repaso:""
+};
+const PIC_NAMES = {
+  mar:"Lía and Tomás look at the sea: a dolphin, an octopus, a shark, and a sea turtle",
+  calendario:"Lía and Tomás point at a calendar showing months 1 to 6",
+  meses:"Lía and Tomás with a calendar of months 7 to 12",
+  estaciones:"Four drawings of one place: spring flowers, summer sun, autumn leaves, winter snow",
+  granja:"Lía sees one cat and one cow; Tomás sees two cats and three cows",
+  picnic:"Lía holds a basket, Tomás holds a blanket; a plate, a cup, and a napkin",
+  canastas:"Lía with her basket and Tomás with his cup, talking",
+  repaso:"Lía at a picnic with her basket, two cups, and three apples"
+};
+function phHTML(id){
+  return `<div class="pic ph"><div class="ph-ico">🖼️</div><div><b>Picture goes here</b></div><div class="ph-note">${PIC_NAMES[id]||''}<br>(file: images/${id}.png)</div></div>`;
+}
+function picHTML(id, small){
+  const src = PICS[id] || `images/${id}.png`;
+  const fallback = small ? "this.remove()" : `this.outerHTML=phHTML('${id}')`;
+  return `<img class="${small?'pic-sm':'pic'}" src="${src}" alt="" onerror="${fallback}">`;
+}
+
+/* ---------- topics (from the Level 2 Quarter 2 overview, pacing guide, and textbook pp. 31–51) ----------
+   task = the graded in-class activity for that date (shown near the end, before ¡Muy bien!). */
+const TOPICS = [
+{
+  title:"Los animales del mar", en:"Ocean Animals", date:"Nov 18", ico:"🐙", color:"#0077b6",
+  goal:"I can name animals in an ocean picture.<br>I can say what is there with <b>Hay…</b>",
+  words:[["🌊","el océano / el mar","ocean / sea"],["🐬","el delfín","dolphin"],["🐙","el pulpo","octopus"],["🦈","el tiburón","shark"],["🐢","la tortuga marina","sea turtle"]],
+  sounds:[{title:"La letra n", syl:["na","ne","ni","no","nu"], words:[["mano","MA-no"],["luna","LU-na"],["nube","NU-be"]], tip:"For n, your tongue goes up. For m, your lips close. lu + na = luna", talk:[["¿Qué hay en el mar?","What is in the sea?"],["Hay un pulpo.","There is an octopus."],["Y hay un delfín.","And there is a dolphin."],["¡Y hay un tiburón!","And there is a shark!"]]}],
+  turns:[
+    {dir:"What animal is it? A, B, or C?", vis:"🐬", q:"¿Qué es?", choices:["el pulpo","el delfín","el tiburón"], c:1, ans:"Es un delfín.", en:"It is a dolphin."},
+    {dir:"Say it with <b>Hay…</b>", vis:"🐙", q:"¿Qué hay en el mar?", ans:"Hay un pulpo.", en:"There is an octopus."},
+    {dir:"This turtle lives in the <b>sea</b>! A or B?", vis:"🐢🌊", q:"¿Qué es?", choices:["una tortuga marina","un tiburón"], c:0, ans:"Es una tortuga marina.", en:"It is a sea turtle."},
+    {tell:true, pic:"mar", title:"En el mar", lines:["En el mar hay un delfín.","Hay un pulpo.","Lía ve un tiburón.","Tomás ve una tortuga marina."]},
+    {pic:"mar", dir:"Answer about the story. A or B?", q:"¿Dónde están los animales?", choices:["en el mar","en el parque"], c:0, ans:"En el mar.", en:"In the sea."},
+    {pic:"mar", dir:"Answer about the story. A, B, or C?", q:"¿Qué ve Tomás?", choices:["un tiburón","una tortuga marina","un pulpo"], c:1, ans:"Tomás ve una tortuga marina.", en:"Tomás sees a sea turtle."},
+    {pic:"mar", dir:"Finish the sentence from the story.", q:'Hay un <span class="blank"></span>.', ans:"Hay un pulpo.", en:"Delfín, pulpo, or tiburón all work!"},
+    {dir:"Your turn! Say one animal or type it in the chat.", vis:"🐬 🐙 🦈 🐢", q:"¿Qué hay en el mar?", ans:"Hay un tiburón.", en:"Any animal works! Example: There is a shark."}
+  ],
+  task:{title:"Dibuja dos animales del mar", en:"Draw and label 2 sea animals",
+    steps:["Draw two sea animals.","Write or say their names.","Show your drawing to the camera."],
+    frame:"Hay un ____. Hay una ____.", bank:["el delfín","el pulpo","el tiburón","la tortuga marina"]}
+},
+{
+  title:"Repaso del mar + los meses", en:"Ocean Review + Months Preview", date:"Nov 25", ico:"🔁", color:"#8b5cf6",
+  note:"Half day • 2C and 2A/3C only • No class for 2B/3B • No graded task",
+  goal:"I can name sea animals again.<br>I can hear the names of some months.",
+  vocab:[{head:"Repaso: el mar", sub:"Review: the sea", words:[["🐬","el delfín","dolphin"],["🐙","el pulpo","octopus"],["🦈","el tiburón","shark"],["🐢","la tortuga marina","sea turtle"]]},
+         {head:"Los meses", sub:"A first look at the months", words:[[cal(11),"noviembre","November"],[cal(12),"diciembre","December"],[cal(1),"enero","January"]]}],
+  sounds:[{title:"Repaso: la letra n", syl:["na","ne","ni","no","nu"], words:[["mano","MA-no"],["luna","LU-na"],["nube","NU-be"]], tip:"Can you still hear the n? lu + na = luna", talk:[["¿Qué mes es?","What month is it?"],["Es noviembre.","It is November."],["¿Y después?","And after that?"],["Después viene diciembre.","Next comes December."]]}],
+  turns:[
+    {dir:"Remember? A, B, or C?", vis:"🦈", q:"¿Qué es?", choices:["un delfín","un tiburón","un pulpo"], c:1, ans:"Es un tiburón.", en:"It is a shark."},
+    {dir:"Say it with <b>Hay…</b>", vis:"🐬", q:"¿Qué hay en el mar?", ans:"Hay un delfín.", en:"There is a dolphin."},
+    {dir:"Fill in the blank. A or B?", vis:"🐢", q:'Hay <span class="blank"></span> tortuga marina.', choices:["un","una"], c:1, ans:"Hay una tortuga marina.", en:"There is a sea turtle."},
+    {tell:true, pic:"mar", title:"En el mar (otra vez)", lines:["En el mar hay un delfín.","Hay un pulpo.","Lía ve un tiburón.","Tomás ve una tortuga marina."]},
+    {pic:"mar", dir:"Answer about the story.", q:"¿Qué ve Lía?", ans:"Lía ve un tiburón.", en:"Lía sees a shark."},
+    {dir:"New! This month is <b>noviembre</b>. Listen and repeat.", vis:cal(11), q:"¿Qué mes es?", ans:"Es noviembre.", en:"It is November."},
+    {dir:"What month comes next? A or B?", vis:cal(11)+" ➜ ?", q:"noviembre ➜ ?", choices:["diciembre","enero"], c:0, ans:"Diciembre.", en:"December comes after November."}
+  ],
+  task:null
+},
+{
+  title:"Los meses del año", en:"Months of the Year", date:"Dec 2", ico:"🗓️", color:"#e4572e",
+  goal:"I can recognize the months of the year.<br>I can answer <b>¿En qué mes estamos?</b>",
+  vocab:[{head:"enero a junio", sub:"January to June", words:[[cal(1),"enero","January"],[cal(2),"febrero","February"],[cal(3),"marzo","March"],[cal(4),"abril","April"],[cal(5),"mayo","May"],[cal(6),"junio","June"]]},
+         {head:"julio a diciembre", sub:"July to December", words:[[cal(7),"julio","July"],[cal(8),"agosto","August"],[cal(9),"septiembre","September"],[cal(10),"octubre","October"],[cal(11),"noviembre","November"],[cal(12),"diciembre","December"]]}],
+  sounds:[{title:"La letra ñ", syl:["ña","ñe","ñi","ño","ñu"], words:[["niño","NI-ño"],["piña","PI-ña"],["moño","MO-ño"]], tip:"ñ is a different letter from n. Keep ñ together: pi + ña = piña", talk:[["¿Qué mes es?","What month is it?"],["Es mayo.","It is May."],["¿Y después?","And after that?"],["Después viene junio.","Next comes June."]]},
+    {title:"Repaso: m, s, p, l", syl:["ma","sa","pa","la","mi","si","pi","li"], words:[["mesa","ME-sa"],["sopa","SO-pa"],["lupa","LU-pa"]], tip:"If a word is tricky, go back to the first beat: me + sa = mesa", talk:[["¿En qué mes estamos?","What month are we in?"],["Estamos en diciembre.","We are in December."],["Busquemos el mes.","Let's find the month."],["¡Aquí está!","Here it is!"]]}],
+  turns:[
+    {dir:"Which month is number 1? A, B, or C?", vis:cal(1), q:"¿Qué mes es?", choices:["junio","enero","febrero"], c:1, ans:"Es enero.", en:"It is January."},
+    {dir:"Say the month.", vis:cal(5), q:"¿Qué mes es?", ans:"Es mayo.", en:"It is May."},
+    {dir:"What comes next? A, B, or C?", vis:cals(1,2,3)+" ➜ ?", q:"enero, febrero, marzo, …", choices:["abril","junio","mayo"], c:0, ans:"Abril.", en:"April comes after March."},
+    {tell:true, pic:"calendario", title:"Lía mira el calendario", lines:["Lía mira el calendario.","Enero, febrero, marzo, dice Lía.","Abril, mayo, junio, dice Tomás.","¡Seis meses!"]},
+    {pic:"calendario", dir:"Answer about the story. A, B, or C?", q:"¿Cuál es el sexto mes?", choices:["mayo","junio","abril"], c:1, ans:"Junio.", en:"June is the sixth month."},
+    {dir:"Which month comes after <b>junio</b>? A, B, or C?", vis:cal(6)+" ➜ ?", q:"junio ➜ ?", choices:["julio","agosto","enero"], c:0, ans:"Julio.", en:"July comes after June."},
+    {tell:true, pic:"meses", title:"¡Doce meses!", lines:["Tomás dice: julio y agosto.","Lía dice: septiembre y octubre.","Los dos dicen: noviembre y diciembre.","¡Doce meses en el año!"]},
+    {pic:"meses", dir:"Answer about the story. A, B, or C?", q:"¿Cuál es el último mes del año?", choices:["octubre","noviembre","diciembre"], c:2, ans:"Diciembre.", en:"December is the last month."},
+    {pic:"meses", dir:"One more question about the story!", q:"¿Cuántos meses hay en el año?", ans:"Hay doce meses.", en:"There are twelve months."},
+    {dir:"Look at our calendar. Say the whole answer.", vis:cal(12), q:"¿En qué mes estamos?", ans:"Estamos en diciembre.", en:"We are in December."}
+  ],
+  task:{title:"Contesta con el calendario", en:"Oral responses with a calendar",
+    steps:["Look at the calendar.","Listen to the question.","Answer out loud."],
+    frame:"Estamos en ____. &nbsp; Es ____.", bank:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]}
+},
+{
+  title:"Las estaciones", en:"Seasons", date:"Dec 9", ico:"🍂", color:"#5b8c2a",
+  goal:"I can name the four seasons.<br>I can match a season with a picture.",
+  words:[["🌸","la primavera","spring"],["☀️","el verano","summer"],["🍂","el otoño","autumn / fall"],["❄️","el invierno","winter"]],
+  sounds:[{title:"Repaso: b, t, n, ñ", syl:["ba","ta","na","ña","bo","to","no","ño"], words:[["bota","BO-ta"],["mano","MA-no"],["piña","PI-ña"]], tip:"n and ñ are not the same letter. Listen: ma + no = mano, pi + ña = piña", talk:[["¿Qué estación es?","What season is it?"],["Es verano.","It is summer."],["¿Te gusta el verano?","Do you like summer?"],["Sí. Me gusta el verano.","Yes. I like summer."]]}],
+  turns:[
+    {dir:"What season? A, B, or C?", vis:"🌸🌷", q:"¿Qué estación es?", choices:["el invierno","la primavera","el otoño"], c:1, ans:"Es primavera.", en:"It is spring."},
+    {dir:"Say it with <b>Es…</b>", vis:"☀️🏖️", q:"¿Qué estación es?", ans:"Es verano.", en:"It is summer."},
+    {dir:"The leaves are falling! A or B?", vis:"🍂🍁", q:"¿Qué estación es?", choices:["Es otoño.","Es verano."], c:0, ans:"Es otoño.", en:"It is autumn."},
+    {tell:true, pic:"estaciones", title:"Cuatro dibujos", lines:["En el dibujo de primavera hay flores.","En el dibujo de verano hay sol.","En el dibujo de otoño hay hojas.","En el dibujo de invierno hay nieve."]},
+    {pic:"estaciones", dir:"Answer about the story. A, B, or C?", q:"¿Qué dibujo tiene flores?", choices:["primavera","otoño","invierno"], c:0, ans:"El dibujo de primavera.", en:"The spring picture."},
+    {pic:"estaciones", dir:"Answer about the story.", q:"¿En qué dibujo hay hojas?", ans:"En el dibujo de otoño.", en:"In the autumn picture."},
+    {dir:"Think! Does winter have snow <b>everywhere</b>?", vis:"❄️⛄ ❓ 🌴☀️", q:"¿Hay nieve en todas partes?", ans:"No.", en:"No. Seasons look different in different places."},
+    {dir:"Your turn! Pick a season. Say it or type it in the chat.", vis:"🌸 ☀️ 🍂 ❄️", q:"¿Qué estación te gusta?", ans:"Me gusta el verano.", en:"Any choice works! Example: I like summer."}
+  ],
+  task:{title:"Dibuja una estación", en:"Draw and label 1 season",
+    steps:["Draw one season. It can look like where you live!","Write the season name.","Show your drawing and say <b>Es…</b>"],
+    frame:"Es ____.", bank:["la primavera","el verano","el otoño","el invierno"]}
+},
+{
+  title:"Uno y más de uno", en:"One and More Than One", date:"Dec 16", ico:"🐈", color:"#d63384",
+  goal:"I can tell one thing from more than one.<br>I can say <b>Hay dos gatos.</b>",
+  words:[["🐈","un gato","one cat"],["🐈🐈","dos gatos","two cats"],["🐄","una vaca","one cow"],["🐄🐄🐄","tres vacas","three cows"],["🐈🐄","dos animales","two animals"]],
+  sounds:[{title:"Escucho el final", syl:["gato → gatos","animal → animales"], words:[["gatos","GA-tos"],["vacas","VA-cas"],["animales","a-ni-MA-les"]], tip:"Listen all the way to the end. The ending tells you there is more than one.", talk:[["¿Cuántos gatos hay?","How many cats are there?"],["Hay dos gatos.","There are two cats."],["¿Y vacas?","And cows?"],["Hay tres vacas.","There are three cows."]]}],
+  turns:[
+    {dir:"<b>One</b> or <b>more than one</b>? A or B?", vis:"🐈", q:"¿Qué hay?", choices:["un gato","dos gatos"], c:0, ans:"Hay un gato.", en:"There is one cat."},
+    {dir:"Count! Answer with <b>Hay…</b>", vis:"🐈🐈", q:"¿Cuántos gatos hay?", ans:"Hay dos gatos.", en:"There are two cats."},
+    {dir:"Count the cows. A, B, or C?", vis:"🐄🐄🐄", q:"¿Cuántas vacas hay?", choices:["una vaca","dos vacas","tres vacas"], c:2, ans:"Hay tres vacas.", en:"There are three cows."},
+    {tell:true, pic:"granja", title:"¿Qué ven Lía y Tomás?", lines:["Lía ve un gato.","Tomás ve dos gatos.","Lía ve una vaca.","Tomás ve tres vacas."]},
+    {pic:"granja", dir:"Answer about the story. A or B?", q:"¿Quién ve dos gatos?", choices:["Lía","Tomás"], c:1, ans:"Tomás.", en:"Tomás sees two cats."},
+    {dir:"Make it <b>more than one</b>.", vis:"🐈 ➜ 🐈🐈", q:"gato ➜ ?", ans:"gatos", en:"cats (gato adds -s)"},
+    {dir:"Make it <b>more than one</b>. A, B, or C?", vis:"🐈🐄 ➜ 🐈🐄🐈🐄", q:"animal ➜ ?", choices:["animals","animales","animalos"], c:1, ans:"animales", en:"animals (animal adds -es)"},
+    {dir:"Your turn! Say it or type it in the chat.", vis:"🐄🐄", q:"¿Qué hay?", ans:"Hay dos vacas.", en:"There are two cows."}
+  ],
+  task:{title:"Dibuja un gato y dos gatos", en:"Draw and label un gato / dos gatos",
+    steps:["Draw one cat.","Draw two cats.","Label them: <b>un gato</b> and <b>dos gatos</b>.","Show your drawing and say <b>Hay dos gatos.</b>"],
+    frame:"Hay un gato. &nbsp; Hay dos gatos.", bank:["un gato","dos gatos"]}
+},
+{
+  title:"Vamos de picnic", en:"Let's Have a Picnic", date:"Jan 6", ico:"🧺", color:"#2a9d8f",
+  goal:"I can name picnic things.<br>I can ask for something politely.",
+  vocab:[{head:"Para el picnic", sub:"Picnic things", words:[["🧺","la canasta","basket"],[blanket(),"la manta","blanket"],["🍽️","el plato","plate"],[glass(),"el vaso","cup"],[napkin(),"la servilleta","napkin"]]},
+         {head:"Palabras amables", sub:"Polite words", words:[["🙏","Un vaso, por favor.","A cup, please."],["🤲","Aquí tienes.","Here you are."],["😊","Gracias.","Thank you."]]}],
+  sounds:[{title:"Juntamos sílabas", syl:["ma","me","sa","pa","la","to"], words:[["manta","MAN-ta"],["plato","PLA-to"],["vaso","VA-so"]], tip:"Keep p and l together: pla-to. man + ta = manta", talk:[["Un vaso, por favor.","A cup, please."],["Aquí tienes.","Here you are."],["Gracias.","Thank you."]]}],
+  turns:[
+    {dir:"What is it? A, B, or C?", vis:"🧺", q:"¿Qué es?", choices:["la manta","la canasta","el plato"], c:1, ans:"Es una canasta.", en:"It is a basket."},
+    {dir:"What is it?", vis:glass(), q:"¿Qué es?", ans:"Es un vaso.", en:"It is a cup."},
+    {dir:"Ask for it politely.", vis:"🍽️", q:'Un <span class="blank"></span>, por favor.', ans:"Un plato, por favor.", en:"A plate, please."},
+    {tell:true, pic:"picnic", title:"El picnic", lines:["Lía tiene una canasta.","Tomás tiene una manta.","Hay un plato y un vaso.","Lía pide una servilleta."]},
+    {pic:"picnic", dir:"Answer about the story. A or B?", q:"¿Quién tiene una canasta?", choices:["Lía","Tomás"], c:0, ans:"Lía.", en:"Lía has a basket."},
+    {pic:"picnic", dir:"Answer about the story.", q:"¿Quién tiene una manta?", ans:"Tomás.", en:"Tomás has a blanket."},
+    {pic:"picnic", dir:"Answer about the story. A, B, or C?", q:"¿Qué pide Lía?", choices:["un plato","un vaso","una servilleta"], c:2, ans:"Una servilleta.", en:"A napkin."},
+    {dir:"Your friend gives you a cup. What do you say? A, B, or C?", vis:glass(), q:"Aquí tienes.", choices:["Por favor.","Gracias.","Hola."], c:1, ans:"¡Gracias!", en:"Thank you!"},
+    {dir:"Your turn! Ask for one thing. Say it or type it in the chat.", vis:row(["🧺","la canasta"],[blanket(),"la manta"],["🍽️","el plato"],[glass(),"el vaso"],[napkin(),"la servilleta"]), q:"¿Qué quieres?", ans:"Una servilleta, por favor.", en:"Any choice works! Example: A napkin, please."}
+  ],
+  task:{title:"Pide con por favor", en:"Name picnic things and ask politely",
+    steps:["Name one picnic thing.","Ask for it with <b>por favor</b>.","Say <b>gracias</b>."],
+    frame:"____, por favor. &nbsp; Gracias.", bank:["la canasta","la manta","el plato","el vaso","la servilleta"]}
+},
+{
+  title:"Mi canasta y tu canasta", en:"My Basket and Your Basket", date:"Jan 13", ico:"🙋", color:"#ef4444",
+  goal:"I can use <b>mi</b> for my and <b>tu</b> for your.<br>I can ask <b>¿Es tu…?</b>",
+  words:[["🙋🧺","mi canasta","my basket"],["👉🧺","tu canasta","your basket"],["🙋"+glass(),"mi vaso","my cup"],["👉🍽️","tu plato","your plate"]],
+  sounds:[{title:"Palabras pequeñas: mi y tu", syl:["mi","tu"], words:[["mi","MI"],["tu","TU"],["canasta","ca-NAS-ta"]], tip:"Point to yourself for mi. Point to your friend for tu. Say it smoothly: mi canasta.", talk:[["¿Es tu plato?","Is it your plate?"],["Sí, es mi plato.","Yes, it is my plate."],["Aquí tienes tu plato.","Here is your plate."],["Gracias.","Thank you."]]}],
+  turns:[
+    {dir:"Point to <b>yourself</b>. A or B?", vis:"🙋🧺", q:'Es <span class="blank"></span> canasta.', choices:["mi","tu"], c:0, ans:"Es mi canasta.", en:"It is my basket."},
+    {dir:"Point to <b>your friend</b>. A or B?", vis:"👉🍽️", q:'Es <span class="blank"></span> plato.', choices:["mi","tu"], c:1, ans:"Es tu plato.", en:"It is your plate."},
+    {dir:"What does <b>tu</b> mean? A or B?", vis:"👉", q:"tu = ?", choices:["my","your"], c:1, ans:"tu = your", en:"tu means your."},
+    {tell:true, pic:"canastas", title:"¿Es tu vaso?", lines:["Lía dice: Es mi canasta.","Tomás dice: Es mi vaso.","Lía pregunta: ¿Es tu vaso?","Tomás dice: Sí, es mi vaso."]},
+    {pic:"canastas", dir:"Answer about the story. A or B?", q:"¿De quién es la canasta?", choices:["de Lía","de Tomás"], c:0, ans:"Es de Lía.", en:"It is Lía's basket."},
+    {pic:"canastas", dir:"Answer about the story.", q:"¿De quién es el vaso?", ans:"Es de Tomás.", en:"It is Tomás's cup."},
+    {dir:"Your friend asks you. Answer <b>yes</b>.", vis:"🙋🍽️", q:"¿Es tu plato?", ans:"Sí, es mi plato.", en:"Yes, it is my plate."},
+    {dir:"Your turn! Ask a friend about their cup.", vis:"👉"+glass(), q:"¿Es…?", ans:"¿Es tu vaso?", en:"Is it your cup?"}
+  ],
+  task:{title:"Dibuja dos canastas", en:"Draw and label 2 baskets",
+    steps:["Draw two baskets.","Label them: <b>mi canasta</b> and <b>tu canasta</b>.","Show your drawing. Point and say mi and tu."],
+    frame:"Es mi canasta. &nbsp; Es tu canasta.", bank:["mi canasta","tu canasta"]}
+},
+{
+  title:"Repaso del trimestre", en:"Quarter 2 Review", date:"Jan 20", ico:"⭐", color:"#14b8a6",
+  goal:"I can use words from this quarter.<br>I can show what I understand.",
+  vocab:[{head:"Repaso", sub:"Words we know", words:[["🐙","el pulpo","octopus"],[cal(1),"enero","January"],["🌸","la primavera","spring"],["🐈🐈","dos gatos","two cats"],["🧺","mi canasta","my basket"],["🙏","por favor","please"]]}],
+  sounds:[{title:"Celebramos los sonidos", syl:["m","s","p","l","b","t","n","ñ"], words:[["sopa","SO-pa"],["mano","MA-no"],["piña","PI-ña"]], tip:"Pick one word. Say it, clap it, and use it in a sentence.", talk:[["Hola. ¿Es tu canasta?","Hello. Is it your basket?"],["Sí. Es mi canasta.","Yes. It is my basket."],["Un vaso, por favor.","A cup, please."],["Aquí tienes.","Here you are."]]}],
+  turns:[
+    {dir:"🔊 Listen! Which picture? A, B, or C?", say:"el tiburón", q:"¿Cuál es?", choices:["🐬","🦈","🐢"], c:1, ans:"el tiburón", en:"the shark"},
+    {dir:"🔊 Listen! Which picture? A, B, or C?", say:"el invierno", q:"¿Cuál es?", choices:["🌸","☀️","❄️"], c:2, ans:"el invierno", en:"winter"},
+    {dir:"🔊 Listen! Which picture? A, B, or C?", say:"dos gatos", q:"¿Cuál es?", choices:["🐈","🐈🐈","🐈🐈🐈"], c:1, ans:"dos gatos", en:"two cats"},
+    {dir:"Look at the picture. Answer in Spanish.", vis:"🐙", q:"¿Qué hay en el mar?", ans:"Hay un pulpo.", en:"There is an octopus."},
+    {dir:"Look at our calendar. Say the whole answer.", vis:cal(1), q:"¿En qué mes estamos?", ans:"Estamos en enero.", en:"We are in January."},
+    {tell:true, pic:"repaso", title:"El picnic de Lía", lines:["Hola. Me llamo Lía.","Es mi canasta.","Hay dos vasos y tres manzanas.","Un vaso, por favor. ¡Gracias!"]},
+    {pic:"repaso", dir:"Answer about the story. A or B?", q:"¿De quién es la canasta?", choices:["de Lía","de Tomás"], c:0, ans:"Es de Lía.", en:"It is Lía's basket."},
+    {pic:"repaso", dir:"Answer about the story. A, B, or C?", q:"¿Cuántos vasos hay?", choices:["un vaso","dos vasos","tres vasos"], c:1, ans:"Hay dos vasos.", en:"There are two cups."},
+    {pic:"repaso", dir:"Which word makes it polite? A, B, or C?", q:"Un vaso, ____.", choices:["hola","por favor","dos"], c:1, ans:"Un vaso, por favor.", en:"A cup, please."},
+    {dir:"Your friend asks you. Answer <b>yes</b>.", vis:"🙋🧺", q:"¿Es tu canasta?", ans:"Sí. Es mi canasta.", en:"Yes. It is my basket."}
+  ],
+  task:{title:"¿Qué entiendes?", en:"Interactive comprehension review",
+    steps:["Listen to each question.","Point, say, or type your answer.","Try your best. A retry helps you learn."],
+    frame:"", bank:[]}
+}
+];
+/* ---------- state ---------- */
+let t = null;      // topic index
+let s = 0;         // slide index: title, goal, vocab page(s), turns, end
+let shown = false;
+const $ = id => document.getElementById(id);
+
+/* ---------- home ---------- */
+function buildHome(){
+  $('grid').innerHTML = TOPICS.map((tp,i)=>`
+    <button class="topic-btn" style="--c:${tp.color}" onclick="openTopic(${i})">
+      <span class="ico">${tp.ico}</span>
+      <span><div class="t">${tp.title}</div><div class="s">${tp.en} &bull; ${tp.date}</div>${tp.note?`<div class="n">2C and 2A/3C only</div>`:''}</span>
+    </button>`).join('');
+}
+function goHome(){
+  t = null;
+  $('activity').style.display='none';
+  $('home').style.display='flex';
+  window.scrollTo(0,0);
+}
+function openTopic(i){
+  t = i; s = 0;
+  $('home').style.display='none';
+  $('activity').style.display='flex';
+  render();
+}
+
+/* ---------- activity ---------- */
+function slidesFor(tp){
+  const vocab = tp.vocab || [{head:"Palabras nuevas", sub:"New words", words:tp.words}];
+  return [{type:'title'}, {type:'goal'}]
+    .concat(vocab.map(v=>({type:'vocab', v})))
+    .concat(tp.turns.map((tn,k)=>({type: tn.tell ? 'story' : 'turn', tn, k})))
+    .concat((tp.sounds||[]).flatMap(x=>[{type:'sound', x},{type:'talk', x}]))
+    .concat(tp.task ? [{type:'task'}] : [])
+    .concat([{type:'end'}]);
+}
+function render(){
+  const tp = TOPICS[t], slides = slidesFor(tp), sl = slides[s];
+  document.documentElement.style.setProperty('--c', tp.color);
+  $('barIco').textContent = tp.ico;
+  $('barTitle').textContent = tp.title + '  •  ' + tp.en;
+  const done = (sl.type==='turn'||sl.type==='story') ? sl.k+1 : (sl.type==='end'||sl.type==='task') ? tp.turns.length : 0;
+  $('dots').innerHTML = tp.turns.map((_,k)=>`<span class="dot ${k < done ? 'on':''}"></span>`).join('');
+  shown = false;
+  const st = $('stage');
+  $('nextBtn').textContent = 'Next ▶';
+
+  if (sl.type==='title'){
+    st.innerHTML = `
+      <div class="vis hero">${tp.ico}</div>
+      <p class="big-title">${tp.title}</p>
+      <div class="goal">${tp.en} &bull; ${tp.date}</div>
+      ${tp.note ? `<div class="note">${tp.note}</div>` : ''}`;
+    setBtns(false, true, true);
+    return;
+  }
+  if (sl.type==='goal'){
+    st.innerHTML = `
+      <div class="dir">🎯 <b>Meta de hoy</b> &nbsp;•&nbsp; Today's goal</div>
+      <div class="goal-big">${tp.goal}</div>`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='vocab'){
+    st.innerHTML = `
+      <div class="dir">📚 <b>${sl.v.head}</b> &nbsp;•&nbsp; ${sl.v.sub}</div>
+      <div class="bank big">${sl.v.words.map(w=>`<div class="word"><div class="e">${w[0]}</div><div class="w">${w[1]}</div><div class="m">${w[2]}</div></div>`).join('')}</div>`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='story'){
+    st.innerHTML = `
+      <div class="dir">📖 <b>Leemos juntos</b> &nbsp;•&nbsp; Listen to the story</div>
+      <div class="story-wrap">
+        ${picHTML(sl.tn.pic, false)}
+        <div class="story big"><div class="story-title">${sl.tn.title}</div>${sl.tn.lines.map(l=>`<div>${l}</div>`).join('')}</div>
+      </div>`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='sound'){
+    const x = sl.x;
+    const syll = w => w.split('-').map(p => p === p.toUpperCase() ? `<span class="stress">${p.toLowerCase()}</span>` : p).join('<span class="dash">·</span>');
+    st.innerHTML = `
+      <div class="dir">🔊 <b>Sonidos</b> &nbsp;•&nbsp; Listen and repeat</div>
+      <p class="snd-title">${x.title}</p>
+      <div class="syl">${x.syl.map(y=>`<span>${y}</span>`).join('')}</div>
+      <div class="bank big snd">${x.words.map(w=>`<div class="word"><div class="w">${w[0]}</div><div class="sb">${syll(w[1])}</div></div>`).join('')}</div>
+      <div class="tip">💡 ${x.tip}</div>`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='talk'){
+    st.innerHTML = `
+      <div class="dir">🗣️ <b>Hablamos</b> &nbsp;•&nbsp; Take turns: Lía and Tomás</div>
+      <div class="talk">${sl.x.talk.map((l,k)=>`<div class="bub ${k%2?'tomas':'lia'}"><span class="who">${k%2?'👦 Tomás':'👧 Lía'}</span>${l[0]}<span class="ten">${l[1]}</span></div>`).join('')}</div>`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='task'){
+    const k = tp.task;
+    st.innerHTML = `
+      <div class="dir">📝 <b>Tarea en clase</b> &nbsp;•&nbsp; Today's class task</div>
+      <div class="task">
+        <p class="task-title">${k.title}</p>
+        <div class="task-en">${k.en}</div>
+        <ol>${k.steps.map(x=>`<li>${x}</li>`).join('')}</ol>
+        ${k.frame ? `<div class="frame">${k.frame}</div>` : ''}
+      </div>
+      ${k.bank && k.bank.length ? `<div class="mini-bank">${k.bank.map(w=>`<span>${w}</span>`).join('')}</div>` : ''}
+      ${/Draw/.test(k.steps.join(' ')) ? `<div class="tip">💡 No paper? Show and say your answer out loud instead.</div>` : ''}`;
+    setBtns(true, true, true);
+    return;
+  }
+  if (sl.type==='end'){
+    st.innerHTML = `
+      <p class="big-title">¡Muy bien! 🎉</p>
+      <div class="vis">⭐ 🌟 ⭐</div>`;
+    setBtns(true, true, true);
+    $('nextBtn').textContent = '🏠 Topics';
+    return;
+  }
+
+  const tn = sl.tn;
+  const choices = tn.choices ? `<div class="choices">${tn.choices.map((c,k)=>
+      `<div class="choice${tn.say?' pic-choice':''}" data-k="${k}"><span class="letter">${'ABC'[k]}</span>${c}</div>`).join('')}</div>` : '';
+  st.innerHTML = `
+    <div class="dir">${tn.dir}</div>
+    ${tn.story ? `<div class="story">${tn.story}</div>` : ''}
+    ${tn.vis ? `<div class="vis">${tn.vis}</div>` : ''}
+    ${tn.say ? `<button class="listen" onclick="say()">🔊 Escucha</button>` : ''}
+    ${tn.pic ? picHTML(tn.pic, true) : ''}
+    <p class="q">${tn.q}</p>
+    ${choices}
+    <div class="answer" id="ans"><div class="es">${tn.ans}</div><div class="en">${tn.en}</div></div>`;
+  setBtns(true, true, false);
+}
+function setBtns(back, next, hideShow){
+  $('backBtn').disabled = !back;
+  $('nextBtn').disabled = !next;
+  $('showBtn').style.visibility = hideShow ? 'hidden' : 'visible';
+  $('showBtn').disabled = false;
+}
+function reveal(){
+  if (t === null) return;
+  const sl = slidesFor(TOPICS[t])[s];
+  if (sl.type !== 'turn' || shown) return;
+  shown = true;
+  const tn = sl.tn;
+  $('ans').classList.add('show');
+  document.querySelectorAll('.choice').forEach(el=>{
+    el.classList.add(+el.dataset.k === tn.c ? 'right' : 'dim');
+    if (+el.dataset.k === tn.c) el.querySelector('.letter').textContent = '✓';
+  });
+  $('showBtn').disabled = true;
+}
+function next(){
+  if (t === null) return;
+  if (s === slidesFor(TOPICS[t]).length - 1) return goHome();
+  s++; render();
+}
+function back(){
+  if (t === null || s === 0) return;
+  s--; render();
+}
+/* Listening items: reads the word with the device's Spanish voice (or the teacher says it). */
+function say(){
+  const sl = slidesFor(TOPICS[t])[s];
+  if (!sl.tn || !sl.tn.say || !window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(sl.tn.say);
+  const v = speechSynthesis.getVoices().find(x => /^es[-_]/i.test(x.lang));
+  u.lang = v ? v.lang : 'es-MX'; if (v) u.voice = v; u.rate = .85;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+function toggleFull(){
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+document.addEventListener('keydown', e=>{
+  if (t === null) return;
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') back();
+  else if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); reveal(); }
+  else if (e.key === 'h' || e.key === 'H' || e.key === 'Escape') goHome();
+});
+
+buildHome();
+</script>
+</body>
+</html>
